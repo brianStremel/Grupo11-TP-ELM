@@ -2,6 +2,7 @@ module Backend exposing(..)
 import Models exposing(Movie, Preferences)
 import Regex
 
+
 type HowMany
     = All
     | AtMost Int
@@ -19,16 +20,15 @@ filtrarPeliculasPorPalabrasClave palabras = List.filter (peliculaTienePalabrasCl
 --
 -- Además tiene dos problemas, que también deberías corregir:
 --
--- * distingue mayúsculas de minúsculas, pero debería encontrar a "Lion King" aunque escriba "kINg"
--- * busca una coincidencia exacta, pero si escribís "Avengers Ultron" debería encontrar a "Avengers: Age Of Ultron"
+-- * distingue mayúsculas de minúsculas, pero debería encontrar a "Lion King" aunque escriba "kINg" LISTO
+-- * busca una coincidencia exacta, pero si escribís "Avengers Ultron" debería encontrar a "Avengers: Age Of Ultron" LISTO
 
 toSentenceCase : String -> String
 toSentenceCase word =
     String.toUpper word
 
-peliculaTienePalabrasClave palabras pelicula = String.contains (toSentenceCase palabras) (toSentenceCase pelicula.title)
-
-
+peliculaTienePalabrasClave palabras pelicula= List.all ((flip tienePalabraClave) pelicula.title) (separarEnPalabras palabras)
+tienePalabraClave palabras pelicula = String.contains (toSentenceCase palabras) (toSentenceCase pelicula)
 
 separarEnPalabras : String -> List String
 separarEnPalabras = Regex.split Regex.All (Regex.regex " ")
