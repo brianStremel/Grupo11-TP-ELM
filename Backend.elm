@@ -1,6 +1,8 @@
+
 module Backend exposing(..)
 import Models exposing(Movie, Preferences)
 import Regex
+import List exposing(member)
 
 
 type HowMany
@@ -27,18 +29,24 @@ toSentenceCase : String -> String
 toSentenceCase word =
     String.toUpper word
 
-peliculaTienePalabrasClave palabras pelicula= List.all ((flip tienePalabraClave) pelicula.title) (separarEnPalabras palabras)
-tienePalabraClave palabras pelicula = String.contains (toSentenceCase palabras) (toSentenceCase pelicula)
+peliculaTienePalabrasClave : String -> Movie -> Bool
+peliculaTienePalabrasClave palabras pelicula= List.all ((flip tienePalabraClave) pelicula) (separarEnPalabras palabras)
+
+tienePalabraClave : String -> Movie -> Bool
+tienePalabraClave palabras pelicula = String.contains (toSentenceCase palabras) (toSentenceCase pelicula.title)
 
 separarEnPalabras : String -> List String
 separarEnPalabras = Regex.split Regex.All (Regex.regex " ")
 
 -- **************
--- Requerimiento: visualizar las películas según el género elegido en un selector;
+-- Requerimiento: visualizar las películas según el género elegido en un selector; LISTO
 -- **************
 
 filtrarPeliculasPorGenero : String -> List Movie -> List Movie
-filtrarPeliculasPorGenero genero = completaAca
+filtrarPeliculasPorGenero genero = List.filter (esDelGenero genero)
+
+esDelGenero : String -> Movie -> Bool
+esDelGenero genero pelicula = List.member (toSentenceCase genero) (List.map toSentenceCase pelicula.genre)
 
 -- **************
 -- Requerimiento: filtrar las películas que sean aptas para menores de edad,
@@ -46,7 +54,10 @@ filtrarPeliculasPorGenero genero = completaAca
 -- **************
 
 filtrarPeliculasPorMenoresDeEdad : Bool -> List Movie -> List Movie
-filtrarPeliculasPorMenoresDeEdad mostrarSoloMenores = completaAca
+filtrarPeliculasPorMenoresDeEdad mostrarSoloMenores = List.filter esAptaParaMenores
+
+esAptaParaMenores : Movie -> Bool
+esAptaParaMenores pelicula = pelicula.forKids
 
 -- **************
 -- Requerimiento: ordenar las películas por su rating;
