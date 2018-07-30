@@ -50,7 +50,7 @@ esDelGenero genero pelicula = List.member (toSentenceCase genero) (List.map toSe
 
 -- **************
 -- Requerimiento: filtrar las películas que sean aptas para menores de edad,
---                usando un checkbox;
+--                usando un checkbox; LISTO
 -- **************
 
 filtrarPeliculasPorMenoresDeEdad : Bool -> List Movie -> List Movie
