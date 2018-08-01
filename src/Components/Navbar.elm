@@ -13,14 +13,14 @@ genreOption genre =
     Select.item [value genre] [text genre]
 
 navbar : Html Msg
-navbar = 
+navbar =
   nav[class "navbar navbar-dark bg-dark" ]
   [
     a [ class "navbar-brand", href "#" ] [ text "PdeP-Flix" ],
       Form.formInline [Styles.navbarText] [
         Checkbox.custom [ Checkbox.id "kids", Checkbox.inline, Checkbox.onCheck KidsFilter ] "Kids Protection",
-        Select.select [Select.onChange ChangeGenre] (List.map genreOption ["Genre", "Action", "Adventure", "Animated","Family", "Horror", "Superhero","Suspense", "Terror"]),
+        Select.select [Select.onChange ChangeGenre] (List.map genreOption ["Genre", "Action", "Adventure", "Animated","Family", "Horror", "Superhero","Suspense", "Terror", "Thriller"]),
         Input.text [ Input.attrs [class "mx-sm-3", placeholder "filter movies", onInput FilterName ]
-      ] 
+      ]
    ]
  ]
