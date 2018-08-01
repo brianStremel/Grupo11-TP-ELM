@@ -67,11 +67,17 @@ ordenarPeliculasPorRating : List Movie -> List Movie
 ordenarPeliculasPorRating = List.reverse << List.sortBy .rating
 
 -- **************
--- Requerimiento: dar like a una película
+-- Requerimiento: dar like a una película FUNCIONA, PERO SE PUEDE DAR MAS DE UN LIKE
 -- **************
 
 darLikeAPelicula : Int -> List Movie -> List Movie
-darLikeAPelicula id = completaAca
+darLikeAPelicula id = List.map (peliculaADarleLike id)
+
+peliculaADarleLike id pelicula =
+  if pelicula.id == id then {pelicula | likes = pelicula.likes + 1}
+  else pelicula
+
+
 
 -- **************
 -- Requerimiento: cargar preferencias a través de un popup modal,
