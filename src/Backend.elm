@@ -33,7 +33,7 @@ peliculaTienePalabrasClave : String -> Movie -> Bool
 peliculaTienePalabrasClave palabras pelicula= List.all ((flip tienePalabraClave) pelicula) (separarEnPalabras palabras)
 
 tienePalabraClave : String -> Movie -> Bool
-tienePalabraClave palabras pelicula = String.contains (toSentenceCase palabras) (toSentenceCase pelicula.title)
+tienePalabraClave palabra pelicula = String.contains (toSentenceCase palabra) (toSentenceCase pelicula.title)
 
 separarEnPalabras : String -> List String
 separarEnPalabras = Regex.split Regex.All (Regex.regex " ")
@@ -86,4 +86,54 @@ peliculaADarleLike id pelicula =
 -- **************
 
 calcularPorcentajeDeCoincidencia : Preferences -> List Movie -> List Movie
-calcularPorcentajeDeCoincidencia preferencias = completaAca
+calcularPorcentajeDeCoincidencia preferencias = List.map (calculoDePorcentajes preferencias)
+
+calculoDePorcentajes : Preferences -> Movie -> Movie
+calculoDePorcentajes preferencias = noSupere100 << sumarGenero preferencias.genre << sumarActorActriz preferencias.favoriteActor << sumarPalabrasClave preferencias.keywords
+--calculoDePorcentajes preferencias = noSupere100 << sumarGenerosRecomendados preferencias.genre << sumarGenero preferencias.genre << sumarActorActriz preferencias.favoriteActor << sumarPalabrasClave preferencias.keywords
+
+
+sumarPalabrasClave : String -> Movie -> Movie
+sumarPalabrasClave palabras pelicula = {pelicula | matchPercentage = pelicula.matchPercentage + 20 * cantidadDePalabrasClaveQueContiene palabras pelicula}
+
+cantidadDePalabrasClaveQueContiene : String -> Movie -> Int
+cantidadDePalabrasClaveQueContiene palabras pelicula = List.length (List.filter ((flip tienePalabraClave) pelicula) (separarEnPalabras palabras))
+{-sumarPalabrasClave [palabraClave :: demasPalabrasClave] pelicula = 
+   case if tienePalabraClave palabraClave pelicula then
+        pelicula.matchPercentage == pelicula.matchPercentage + 20
+        sumarPalabrasClave demasPalabrasClave pelicula
+    else 
+        sumarPalabrasClave demasPalabrasClave pelicula
+
+sumarPalabrasClave palabraClave pelicula =
+    if tienePalabraClave palabraClave pelicula then
+        pelicula.matchPercentage == pelicula.matchPercentage + 20
+    else pelicula.matchPercentage-}
+
+sumarActorActriz : String -> Movie -> Movie
+sumarActorActriz actorFavorito pelicula =
+    if tieneActorFavorito actorFavorito pelicula then
+        {pelicula | matchPercentage = pelicula.matchPercentage + 50}
+    else
+        pelicula
+
+tieneActorFavorito : String -> Movie -> Bool
+tieneActorFavorito actorFavorito pelicula = List.member (toSentenceCase actorFavorito) (List.map toSentenceCase pelicula.actors)
+
+sumarGenero : String -> Movie -> Movie
+sumarGenero generoFavorito pelicula = 
+    if esDelGenero generoFavorito pelicula then
+        {pelicula | matchPercentage = pelicula.matchPercentage + 60}
+    else 
+        pelicula
+
+--sumarGenerosRecomendados : String -> Movie -> Movie
+--sumarGenerosRecomendados generoFavorito pelicula = 
+--    if generoFavorito
+
+noSupere100 : Movie -> Movie
+noSupere100 pelicula =
+    if pelicula.matchPercentage > 100 then
+        {pelicula | matchPercentage = 100}
+    else
+        pelicula
