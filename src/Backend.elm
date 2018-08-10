@@ -89,12 +89,12 @@ calcularPorcentajeDeCoincidencia : Preferences -> List Movie -> List Movie
 calcularPorcentajeDeCoincidencia preferencias = List.map (calculoDePorcentajes preferencias)
 
 calculoDePorcentajes : Preferences -> Movie -> Movie
-calculoDePorcentajes preferencias = noSupere100 << sumarGenero preferencias.genre << sumarActorActriz preferencias.favoriteActor << sumarPalabrasClave preferencias.keywords
+calculoDePorcentajes preferencias = sumarGenero preferencias.genre << sumarActorActriz preferencias.favoriteActor << sumarPalabrasClave preferencias.keywords
 --calculoDePorcentajes preferencias = noSupere100 << sumarGenerosRecomendados preferencias.genre << sumarGenero preferencias.genre << sumarActorActriz preferencias.favoriteActor << sumarPalabrasClave preferencias.keywords
 
 
 sumarPalabrasClave : String -> Movie -> Movie
-sumarPalabrasClave palabras pelicula = {pelicula | matchPercentage = pelicula.matchPercentage + 20 * cantidadDePalabrasClaveQueContiene palabras pelicula}
+sumarPalabrasClave palabras pelicula = sumarPorcentaje (20 * cantidadDePalabrasClaveQueContiene palabras pelicula) pelicula
 
 cantidadDePalabrasClaveQueContiene : String -> Movie -> Int
 cantidadDePalabrasClaveQueContiene palabras pelicula = List.length (List.filter ((flip tienePalabraClave) pelicula) (separarEnPalabras palabras))
@@ -113,7 +113,7 @@ sumarPalabrasClave palabraClave pelicula =
 sumarActorActriz : String -> Movie -> Movie
 sumarActorActriz actorFavorito pelicula =
     if tieneActorFavorito actorFavorito pelicula then
-        {pelicula | matchPercentage = pelicula.matchPercentage + 50}
+        sumarPorcentaje 50 pelicula
     else
         pelicula
 
@@ -123,7 +123,7 @@ tieneActorFavorito actorFavorito pelicula = List.member (toSentenceCase actorFav
 sumarGenero : String -> Movie -> Movie
 sumarGenero generoFavorito pelicula = 
     if esDelGenero generoFavorito pelicula then
-        {pelicula | matchPercentage = pelicula.matchPercentage + 60}
+        sumarPorcentaje 60 pelicula
     else 
         pelicula
 
@@ -131,9 +131,16 @@ sumarGenero generoFavorito pelicula =
 --sumarGenerosRecomendados generoFavorito pelicula = 
 --    if generoFavorito
 
-noSupere100 : Movie -> Movie
+{-noSupere100 : Movie -> Movie
 noSupere100 pelicula =
     if pelicula.matchPercentage > 100 then
         {pelicula | matchPercentage = 100}
     else
-        pelicula
+        pelicula-}
+
+sumarPorcentaje : Int -> Movie -> Movie  
+sumarPorcentaje porcentaje pelicula = 
+    if pelicula.matchPercentage + porcentaje <= 100 then
+        {pelicula | matchPercentage = pelicula.matchPercentage + porcentaje}
+    else
+        {pelicula | matchPercentage = 100 }
