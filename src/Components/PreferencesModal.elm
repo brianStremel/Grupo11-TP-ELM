@@ -11,7 +11,7 @@ import Bootstrap.Form.Input as Input
 import Bootstrap.Button as Button
 
 preferencesModal : Model -> Html Msg
-preferencesModal model = 
+preferencesModal model =
   div
     []
     [ Dialog.view
@@ -26,7 +26,7 @@ preferencesModal model =
                           if model.preferences.keywords == "" then
                           Input.text [Input.id "keywords", Input.attrs [placeholder "Enter your keywords separated with a space",
                           onInput UpdatePreferencesKeywords]]
-                          else 
+                          else
                           Input.text [Input.id "keywords", Input.attrs [placeholder model.preferences.keywords,
                           onInput UpdatePreferencesKeywords]]
                         ],
