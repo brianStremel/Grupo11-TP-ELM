@@ -35,8 +35,10 @@ filtrarPeliculasPorGenero : String -> List Movie -> List Movie
 filtrarPeliculasPorGenero genero = List.filter (esDelGenero genero)
 
 esDelGenero : String -> Movie -> Bool
-esDelGenero genero pelicula = List.member (toSentenceCase genero) (List.map toSentenceCase pelicula.genre)
+esDelGenero genero pelicula = List.member (toSentenceCase genero) (generoPrincipal pelicula.genre)
 
+generoPrincipal : List String -> List String
+generoPrincipal = List.map toSentenceCase << List.take 1
 -- FILTRAR PELICULAS MENORES DE EDAD
 
 filtrarPeliculasPorMenoresDeEdad : Bool -> List Movie -> List Movie
@@ -95,7 +97,18 @@ sumarGenero generoFavorito pelicula =
     if esDelGenero generoFavorito pelicula then
         sumarPorcentaje 60 pelicula
     else
+        if esDeGeneroRecomendado generoFavorito pelicula then
+        sumarPorcentaje 15 pelicula
+        else
         pelicula
+
+esDeGeneroRecomendado : String -> Movie -> Bool
+esDeGeneroRecomendado generoFavorito pelicula = List.member (toSentenceCase generoFavorito) (generosRecomendados pelicula.genre)
+
+generosRecomendados : List String -> List String
+generosRecomendados = List.map toSentenceCase << List.drop 1
+
+
 
 sumarPorcentaje : Int -> Movie -> Movie -- SUMA PORCENTAJE Y EVITA QUE SE PASE DE 100
 sumarPorcentaje porcentaje pelicula =
