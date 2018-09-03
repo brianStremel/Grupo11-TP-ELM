@@ -30,8 +30,8 @@ update msg model =
      {model | movies = calcularPorcentajeDeCoincidencia model.preferences model.movies, shouldShowDialog = False}
     ChangeGenre newGenre ->
     -- {model | movies = filtrarPeliculasPorGenero newGenre model.movies, genre = newGenre}
-     {model | movies = filtrarPeliculasPorGenero newGenre moviesCollection, genre = newGenre}
+     {model | movies = filtrarPeliculasPorGenero newGenre model.movies, genre = newGenre}
     KidsFilter _ ->
-     {model | movies = filtrarPeliculasPorMenoresDeEdad (not model.kidsProtection) moviesCollection, kidsProtection = not model.kidsProtection}
+     {model | movies = filtrarPeliculasPorMenoresDeEdad (not model.kidsProtection) model.movies, kidsProtection = not model.kidsProtection}
     OrderByRating ->
       {model | movies = ordenarPeliculasPorRating model.movies}
